@@ -15,9 +15,8 @@ const taskSchema = {
     type: Boolean,
     default: false
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  owner: {
+    type: String,
     required: true,
   }
 }
@@ -44,6 +43,15 @@ const updateTask = async (id, newTask) => {
   return await oldTask.save()
 }
 
+const updateTaskStatus = async (id, newTask) => {
+  const oldTask = await Task.findById(id)
+
+  oldTask.done = newTask.done
+
+  return await oldTask.save()
+}
+
+
 const removeTask = async (id) => {
   return await Task.deleteOne({_id: id})
 }
@@ -56,6 +64,7 @@ module.exports = {
   getAll,
   insertTask,
   updateTask,
+  updateTaskStatus,
   removeTask,
   getTask
 }

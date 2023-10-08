@@ -11,6 +11,9 @@ router.post('/', TaskController.insertTask)
 // Actualizar una tarea
 router.patch('/:id', TaskController.updateTask)
 
+// Actualizar el estado de una tarea
+router.patch('/changeStatus/:id', TaskController.updateTaskStatus)
+
 // Eliminar una tarea
 router.delete('/:id', TaskController.removeTask)
 

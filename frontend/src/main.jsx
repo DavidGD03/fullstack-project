@@ -7,26 +7,36 @@ import {
 // Import our custom CSS
 import './scss/style.scss'
 import Layout from './components/Layout';
-import Contact from './views/Task';
-import Contacts from './views/Tasks';
+import CreateTask from './views/CreateTask';
+import Tasks from './views/Tasks';
 import Login from './views/Login';
+import Register from './views/Register';
+import UpdateTask from './views/UpdateTask';
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: "/",
     element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
   {
     path: "/",
     element: <Layout />,
     children: [
       {
-        path: "task/:taskId",
-        element: <Contact></Contact>,
+        path: "createTask/",
+        element: <CreateTask></CreateTask>,
+      },
+      {
+        path: "updateTask/:taskId",
+        element: <UpdateTask></UpdateTask>,
       },
       {
         path: "tasks/",
-        element: <Contacts></Contacts>,
+        element: <Tasks></Tasks>,
       },
     ],
   },

@@ -1,31 +1,50 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
+export default function SideBar() {
+  const navigate = useNavigate();
+  const [loggedOut, setLoggedOut] = useState(false); // Estado para el cierre de sesión
 
-export default function SideBar () {
-    return <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style={{'width': '280px'}}>
+  const handleLogout = () => {
+    // Eliminar token y userEmail del localStorage
+    window.sessionStorage.removeItem("token");
+    window.sessionStorage.removeItem("userEmail");
+    
+    // Establecer el estado de cierre de sesión en true
+    setLoggedOut(true);
+    
+    // Redirigir al usuario a la raíz de la web
+    navigate("/");
+  };
 
-    <hr/>
-    <ul className="nav nav-pills flex-column mb-auto">
-      <li className="nav-item">
-      <Link to={`login`}>Login</Link>
-      </li>
-      <li>
-      <Link to={`task/1`}>Ver Tarea</Link>
-      </li>
-      <li>
-      <Link to={`tasks`}>Tareas</Link>
-      </li>
-    </ul>
-    <hr/>
-    <div className="dropdown">
-      <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2"/>
-        <strong>mdo</strong>
-      </a>
-      <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><hr className="dropdown-divider"/></li>
-        <li><a className="dropdown-item" href="#">Cerrar Sesión</a></li>
-      </ul>
-    </div>
-  </div>
-};
+  return (
+    <nav id="sidebar" className="bg-light">
+      <div className="p-4">
+        <ul className="list-unstyled">
+        <li className="mb-2">
+            <Link to={`tasks`} className="btn btn-primary btn-block">
+              Inicio
+            </Link>
+          </li>
+        <li className="mb-2">
+            <Link to={`tasks`} className="btn btn-primary btn-block">
+              Todas mis tareas
+            </Link>
+          </li>
+          <li className="mb-2">
+            <Link to={`createTask`} className="btn btn-primary btn-block">
+              Crear tarea
+            </Link>
+          </li>
+            <button
+              onClick={handleLogout}
+              className="btn btn-danger"
+              style={{ position: "absolute", bottom: "10px", left: "10px" }}
+            >
+              Cerrar sesión
+            </button>
+        </ul>
+      </div>
+    </nav>
+  );
+}
