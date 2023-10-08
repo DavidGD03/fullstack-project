@@ -1,2 +1,2 @@
 # fullstack-project
-Proyecto Final : ejemplo.
+Aplicación To-Do con MongoDB y React.
