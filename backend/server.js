@@ -3,10 +3,12 @@ const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
 const userModel = require('./models/User')
-const ContactRoutes = require('./routes/ContactRoutes')
+const Routes = require('./routes')
 const PORT = 3000
+require('dotenv').config()
+//console.log(process.env)
 
-const SECRET_KEY = 'desde septiembre se siente que viene diciembre'
+const SECRET_KEY = process.env.SECRET_KEY
 
 const server = express()
 server.use(cors())
@@ -47,11 +49,12 @@ const validateToken = (req, res, next) => {
   }
 }
 
-server.use('/api/v1/contacts', validateToken, ContactRoutes)
+server.use('/api/v1/users', validateToken, Routes.UserRoutes)
+server.use('/api/v1/tasks', validateToken, Routes.TaskRoutes)
 
 const mongooseConnect = async () => {
   try {
-    await mongoose.connect('mongodb+srv://mali:K0J16H2xFEbnUcpm@cluster0.tsrujhv.mongodb.net/Contacts?retryWrites=true&w=majority')
+    await mongoose.connect(process.env.MONGO_URL)
     console.log('Conexión exitosa')
   } catch (error) {
     console.error(error)

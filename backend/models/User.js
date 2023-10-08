@@ -1,21 +1,27 @@
 const mongoose = require('mongoose')
 
 const userSchema = {
-  email:{
+  username: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
   password: {
     type: String,
-    required: true
-  },
-  name: {
-    type: String,
-    required: false
+    required: true,
   }
 }
 
 const User = mongoose.model('User', userSchema)
+
+const createUser = async (user) => {
+  return await User.create(user)
+}
 
 const validateUser = async (email, password) => {
   const user = await User.find({email})
@@ -32,5 +38,6 @@ const validateUser = async (email, password) => {
 }
 
 module.exports = {
+  createUser,
   validateUser
 }

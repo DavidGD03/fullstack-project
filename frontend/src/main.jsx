@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+// Import our custom CSS
+import './scss/style.scss'
 import Layout from './components/Layout';
-import Contact from './views/Contact';
-import Contacts from './views/Contacts';
+import Contact from './views/Task';
+import Contacts from './views/Tasks';
 import Login from './views/Login';
 
 const router = createBrowserRouter([
@@ -20,11 +21,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "contacts/:contactId",
+        path: "task/:taskId",
         element: <Contact></Contact>,
       },
       {
-        path: "contacts/",
+        path: "tasks/",
         element: <Contacts></Contacts>,
       },
     ],
