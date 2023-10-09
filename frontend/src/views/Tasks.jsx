@@ -10,7 +10,7 @@ export default function Tasks() {
   const navigate = useNavigate();
 
   const getTasks = () => {
-    fetch("http://localhost:3000/api/v1/tasks", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export default function Tasks() {
   };
 
   const handleTaskStatusChange = (taskId, done) => {
-    fetch(`http://localhost:3000/api/v1/tasks/changeStatus/${taskId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks/changeStatus/${taskId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -62,11 +62,11 @@ export default function Tasks() {
   const getFilteredTasks = () => {
     if (filter === "completed") {
       // Filtrar las tareas completadas
-      const completedTasks = currentTasks.filter((task) => task.done);
+      const completedTasks = tasks.filter((task) => task.done);
       setCurrentTasks(completedTasks);
     } else if (filter === "pending") {
       // Filtrar las tareas pendientes
-      const pendingTasks = currentTasks.filter((task) => !task.done);
+      const pendingTasks = tasks.filter((task) => !task.done);
       setCurrentTasks(pendingTasks);
     } else {
       // Mostrar todas las tareas
@@ -92,7 +92,7 @@ export default function Tasks() {
 
   const handleDeleteTask = (taskId) => {
     // Realizar la petición DELETE al endpoint correspondiente
-    fetch(`http://localhost:3000/api/v1/tasks/${taskId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks/${taskId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -106,6 +106,7 @@ export default function Tasks() {
           // Eliminar la tarea del estado local
           const updatedTasks = tasks.filter((task) => task._id !== taskId);
           setTasks(updatedTasks);
+          setCurrentTasks(updatedTasks);
           hideDeleteConfirmation(); // Ocultar la modal después de eliminar
         }
       });
@@ -195,15 +196,45 @@ export default function Tasks() {
       ) : (
         <p>No existen tareas.</p>
       )}
-      {/* Modal de confirmación de eliminación */}
       <div
         className={`modal fade ${showDeleteModal ? "show" : ""}`}
         tabIndex="-1"
         style={{ display: showDeleteModal ? "block" : "none" }}
       >
-        {/* ... (código de la modal) */}
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Confirmar Eliminación</h5>
+              <button
+                type="button"
+                className="close"
+                onClick={hideDeleteConfirmation} 
+              >
+                <span>&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              ¿Estás seguro de que deseas eliminar esta tarea?
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={hideDeleteConfirmation} 
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => handleDeleteTask(taskToDelete)} 
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      {/* Fondo oscuro detrás de la modal */}
       <div
         className={`modal-backdrop fade ${showDeleteModal ? "show" : ""}`}
         style={{ display: showDeleteModal ? "block" : "none" }}

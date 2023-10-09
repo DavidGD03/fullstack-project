@@ -5,12 +5,13 @@ export default function UpdateTask() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [done, setDone] = useState("");
   const navigate = useNavigate();
   const { taskId } = useParams();
 
   useEffect(() => {
     // Obtener detalles de la tarea a editar
-    fetch(`http://localhost:3000/api/v1/tasks/${taskId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks/${taskId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -25,6 +26,7 @@ export default function UpdateTask() {
         return response.json();
       })
       .then((task) => {
+        if(task.owner == window.sessionStorage.getItem("userEmail")) {
         console.log(task.title);
         if (task.title) {
             setTitle(task.title);
@@ -42,11 +44,18 @@ export default function UpdateTask() {
             // Luego, establece el estado "deadline" con el formato deseado
             setDeadline(formattedDeadline);
           }
+            setDone(task.done); }
+            else
+            {
+              alert("No eres el dueño de esa tarea, acceso restringido");
+              navigate("/tasks");
+            }
+          
       });
   }, [taskId, navigate]);
 
   const update = () => {
-    fetch(`http://localhost:3000/api/v1/tasks/${taskId}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks/${taskId}`, {
       method: "PATCH", 
       headers: {
         "Content-Type": "application/json",
@@ -56,6 +65,7 @@ export default function UpdateTask() {
         title: title,
         description: description,
         deadline: deadline,
+        done : done
       }),
     })
       .then((response) => {

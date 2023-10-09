@@ -8,7 +8,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   const register = () => {
-    fetch('http://localhost:3000/api/v1/users', {
+    fetch(`${import.meta.env.VITE_API_URL}/api/v1/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

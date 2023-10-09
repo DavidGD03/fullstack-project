@@ -9,7 +9,7 @@ export default function CreateTask() {
     const navigate = useNavigate();
 
     const create = () => {
-        fetch('http://localhost:3000/api/v1/tasks', {
+        fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
