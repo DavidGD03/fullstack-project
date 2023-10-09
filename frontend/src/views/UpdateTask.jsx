@@ -60,7 +60,6 @@ export default function UpdateTask() {
     })
       .then((response) => {
         if (response.status === 200) {
-          alert("Tarea actualizada");
           navigate("/tasks");
         } else {
           alert("Error, tarea no actualizada debido a una sesión caducada");

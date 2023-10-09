@@ -50,10 +50,8 @@ const createUser = async (user) => {
 const validateUser = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
-    console.log("test")
     return null;
   }
-  console.log(user.password)
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (passwordMatch) {

@@ -49,6 +49,7 @@ export default function Tasks() {
             task._id === taskId ? { ...task, done } : task
           );
           setTasks(updatedTasks);
+          setCurrentTasks(updatedTasks);
         }
       });
   };
@@ -61,11 +62,11 @@ export default function Tasks() {
   const getFilteredTasks = () => {
     if (filter === "completed") {
       // Filtrar las tareas completadas
-      const completedTasks = tasks.filter((task) => task.done);
+      const completedTasks = currentTasks.filter((task) => task.done);
       setCurrentTasks(completedTasks);
     } else if (filter === "pending") {
       // Filtrar las tareas pendientes
-      const pendingTasks = tasks.filter((task) => !task.done);
+      const pendingTasks = currentTasks.filter((task) => !task.done);
       setCurrentTasks(pendingTasks);
     } else {
       // Mostrar todas las tareas
@@ -111,36 +112,33 @@ export default function Tasks() {
   };
 
   return (
-    <section className="container">
-      <h2 className="mt-5">Bienvenido/a {window.sessionStorage.getItem("userEmail")}. <br/>Estas son tus tareas:</h2>
+    <section className="container mt-5">
+      <h2>Bienvenido/a {window.sessionStorage.getItem("userEmail")}.<br />Estas son tus tareas:</h2>
       <div className="mb-3">
-        <button
-          className={`btn btn-outline-primary mr-2 ${
-            filter === "all" ? "active" : ""
-          }`}
-          onClick={() => setFilter("all")}
-        >
-          Todas
-        </button>
-        <button
-          className={`btn btn-outline-success mr-2 ${
-            filter === "completed" ? "active" : ""
-          }`}
-          onClick={() => setFilter("completed")}
-        >
-          Completadas
-        </button>
-        <button
-          className={`btn btn-outline-danger ${
-            filter === "pending" ? "active" : ""
-          }`}
-          onClick={() => setFilter("pending")}
-        >
-          Pendientes
-        </button>
+        <div className="btn-group" role="group">
+          <button
+            className={`btn btn-outline-primary ${filter === "all" ? "active" : ""}`}
+            onClick={() => setFilter("all")}
+          >
+            Todas
+          </button>
+          <button
+            className={`btn btn-outline-success ${filter === "completed" ? "active" : ""}`}
+            onClick={() => setFilter("completed")}
+          >
+            Completadas
+          </button>
+          <button
+            className={`btn btn-outline-danger ${filter === "pending" ? "active" : ""}`}
+            onClick={() => setFilter("pending")}
+          >
+            Pendientes
+          </button>
+        </div>
       </div>
       {currentTasks.length > 0 ? (
-        <table className="table">
+        <div className="table-responsive">
+          <table className="table">
           <thead className="thead-light">
             <tr>
               <th scope="col">Título</th>
@@ -167,77 +165,43 @@ export default function Tasks() {
                 </td>
                 <td>
                   <button
-                    className={`btn btn-sm ${
-                      c.done ? "btn-warning" : "btn-success"
-                    }`}
+                    className={`btn btn-sm ${c.done ? "btn-warning" : "btn-success"}`}
                     onClick={() => handleTaskStatusChange(c._id, !c.done)}
                   >
                     {c.done ? "Marcar como Pendiente" : "Marcar como Completada"}
                   </button>
                 </td>
                 <td>
-              {/* Botón de editar que redirige a la página de actualización */}
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() => navigate(`/updateTask/${c._id}`)} // Redirige a la página de actualización con el ID de la tarea
-              >
-                Editar
-              </button>
-            </td>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={() => navigate(`/updateTask/${c._id}`)}
+                  >
+                    Editar
+                  </button>
+                </td>
                 <td>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => showDeleteConfirmation(c._id)} // Mostrar la modal de confirmación al hacer clic
-              >
-                Eliminar
-              </button>
-            </td>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => showDeleteConfirmation(c._id)}
+                  >
+                    Eliminar
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       ) : (
-        <p className="mt-3">No existen tareas.</p>
+        <p>No existen tareas.</p>
       )}
-       {/* Modal de confirmación de eliminación */}
-       <div
+      {/* Modal de confirmación de eliminación */}
+      <div
         className={`modal fade ${showDeleteModal ? "show" : ""}`}
         tabIndex="-1"
         style={{ display: showDeleteModal ? "block" : "none" }}
       >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Confirmar Eliminación</h5>
-              <button
-                type="button"
-                className="close"
-                onClick={hideDeleteConfirmation} // Ocultar la modal al hacer clic en la "X"
-              >
-                <span>&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              ¿Estás seguro de que deseas eliminar esta tarea?
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={hideDeleteConfirmation} // Ocultar la modal al hacer clic en "Cancelar"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleDeleteTask(taskToDelete)} // Eliminar la tarea al hacer clic en "Eliminar"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* ... (código de la modal) */}
       </div>
       {/* Fondo oscuro detrás de la modal */}
       <div

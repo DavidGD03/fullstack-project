@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const login = () => {
@@ -14,8 +14,8 @@ export default function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: email,
-        password: password,
+        email,
+        password,
       }),
     })
       .then((response) => response.json())
@@ -39,41 +39,43 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError(null); 
+    setError(null);
     login();
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
       <main className="form-signin text-center">
-        <h1 className="h3 my-3 fw-normal">Bienvenid@ a tu lista de tareas</h1>
+        <h1 className="h3 mb-3 fw-normal">¡Bienvenido/a a la App de Lista de Tareas!</h1>
 
-        <form className="my-5 p-5" onSubmit={handleSubmit}>
-          <h3 className="h3 mb-3 fw-normal">Inicia sesión</h3>
-          <div className="form-floating mb-3">
+        <form className="col-md-6 offset-md-3 p-4 border rounded bg-light" onSubmit={handleSubmit}>
+          <h3 className="h3 mb-4">Inicia sesión</h3>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">Correo electrónico</label>
             <input
               value={email}
               type="email"
               className="form-control"
               onChange={handleEmail}
-              id="floatingInput"
+              id="email"
               placeholder="name@example.com"
+              required
             />
-            <label htmlFor="floatingInput">Correo electrónico</label>
           </div>
-          <div className="form-floating mb-3">
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">Contraseña</label>
             <input
               value={password}
               type="password"
               className="form-control"
               onChange={handlePassword}
-              id="floatingPassword"
-              placeholder="Password"
+              id="password"
+              placeholder="Clave"
+              required
             />
-            <label htmlFor="floatingPassword">Clave</label>
           </div>
 
-          <button className="btn btn-primary w-100 py-2" type="submit">
+          <button className="btn btn-primary w-100" type="submit">
             Ingresar
           </button>
           {error && (
@@ -81,17 +83,18 @@ export default function Login() {
               {error}
             </div>
           )}
-          <p className="mt-5 mb-3 text-body-secondary">© David Rojas - 2023</p>
         </form>
-        <p>
+        <p className="mt-3 text-center">
           ¿No tienes una cuenta?{" "}
-          <a
+          <span
+            className="text-primary cursor-pointer"
             onClick={() => navigate("/register")}
             style={{ cursor: "pointer" }}
           >
             <b>Regístrate aquí</b>
-          </a>
+          </span>
         </p>
+        <p className="mt-3 text-center text-body-secondary">© David Rojas - 2023</p>
       </main>
     </div>
   );

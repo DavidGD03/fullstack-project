@@ -24,7 +24,7 @@ export default function CreateTask() {
         })
         .then(response => {
             if( response.status === 201 ) {
-                alert("Tarea creada");
+                alert("Tarea creada exitosamente");
                 navigate("/tasks")
             } else {
                 alert("Error, tarea no creada por sesión caducada");
