@@ -117,6 +117,7 @@ export default function UpdateTask() {
             onChange={handleDescription}
             id="floatingInput"
             placeholder="Descripción de la tarea"
+            style={{ height: "100px" }} 
           />
           <label htmlFor="floatingInput">Descripción</label>
         </div>

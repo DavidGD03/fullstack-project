@@ -7,6 +7,8 @@ export default function Tasks() {
   const [filter, setFilter] = useState("all"); // Estado para el filtro
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Estado para mostrar/ocultar la modal de confirmación
   const [taskToDelete, setTaskToDelete] = useState(null); // Estado para almacenar la tarea a eliminar
+  const [expandedTaskId, setExpandedTaskId] = useState(null);
+
   const navigate = useNavigate();
 
   const getTasks = () => {
@@ -91,7 +93,6 @@ export default function Tasks() {
   };
 
   const handleDeleteTask = (taskId) => {
-    // Realizar la petición DELETE al endpoint correspondiente
     fetch(`${import.meta.env.VITE_API_URL}/api/v1/tasks/${taskId}`, {
       method: "DELETE",
       headers: {
@@ -103,7 +104,6 @@ export default function Tasks() {
         if (response.status === 401) {
           navigate("/");
         } else if (response.status === 204) {
-          // Eliminar la tarea del estado local
           const updatedTasks = tasks.filter((task) => task._id !== taskId);
           setTasks(updatedTasks);
           setCurrentTasks(updatedTasks);
@@ -112,104 +112,107 @@ export default function Tasks() {
       });
   };
 
+  const toggleTaskExpansion = (taskId) => {
+    setExpandedTaskId(taskId === expandedTaskId ? null : taskId);
+  };
+
   return (
     <section className="container mt-5">
-      <h2>Bienvenido/a {window.sessionStorage.getItem("userEmail")}.<br />Estas son tus tareas:</h2>
-      <div className="mb-3">
-        <div className="btn-group" role="group">
-          <button
-            className={`btn btn-outline-primary ${filter === "all" ? "active" : ""}`}
-            onClick={() => setFilter("all")}
-          >
-            Todas
-          </button>
-          <button
-            className={`btn btn-outline-success ${filter === "completed" ? "active" : ""}`}
-            onClick={() => setFilter("completed")}
-          >
-            Completadas
-          </button>
-          <button
-            className={`btn btn-outline-danger ${filter === "pending" ? "active" : ""}`}
-            onClick={() => setFilter("pending")}
-          >
-            Pendientes
-          </button>
+      <div className="row">
+        <div className="col-12">
+          <h3>Bienvenido/a <b>{window.sessionStorage.getItem("userEmail")}</b>.<br /><br />Estas son tus tareas:</h3><br />
         </div>
       </div>
-      {currentTasks.length > 0 ? (
-        <div className="table-responsive">
-          <table className="table">
-          <thead className="thead-light">
-            <tr>
-              <th scope="col">Título</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">Fecha límite</th>
-              <th scope="col">Dueño tarea</th>
-              <th scope="col">¿Realizada?</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentTasks.map((c) => (
-              <tr key={c._id}>
-                <td>{c.title}</td>
-                <td>{c.description}</td>
-                <td>{new Date(c.deadline).toLocaleString("es-ES")}</td>
-                <td>{c.owner}</td>
-                <td>
-                  {c.done ? (
-                    <span className="badge bg-success">Sí</span>
-                  ) : (
-                    <span className="badge bg-danger">No</span>
-                  )}
-                </td>
-                <td>
-                  <button
-                    className={`btn btn-sm ${c.done ? "btn-warning" : "btn-success"}`}
-                    onClick={() => handleTaskStatusChange(c._id, !c.done)}
-                  >
-                    {c.done ? "Marcar como Pendiente" : "Marcar como Completada"}
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => navigate(`/updateTask/${c._id}`)}
-                  >
-                    Editar
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => showDeleteConfirmation(c._id)}
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="row">
+        <div className="col-12 col-md-8 mb-3">
+          <div className="btn-group" role="group">
+            <button
+              className={`btn btn-outline-primary ${filter === "all" ? "active" : ""}`}
+              onClick={() => setFilter("all")}
+            >
+              Todas
+            </button>
+            <button
+              className={`btn btn-outline-success ${filter === "completed" ? "active" : ""}`}
+              onClick={() => setFilter("completed")}
+            >
+              Completadas
+            </button>
+            <button
+              className={`btn btn-outline-danger ${filter === "pending" ? "active" : ""}`}
+              onClick={() => setFilter("pending")}
+            >
+              Pendientes
+            </button>
+          </div>
         </div>
-      ) : (
-        <p>No existen tareas.</p>
-      )}
-      <div
-        className={`modal fade ${showDeleteModal ? "show" : ""}`}
-        tabIndex="-1"
-        style={{ display: showDeleteModal ? "block" : "none" }}
-      >
+      </div>
+      <div className="row">
+        <div className="col-12">
+          {currentTasks.length > 0 ? (
+            <div className="accordion" id="taskAccordion">
+              {currentTasks.map((c) => (
+                <div className="card" key={c._id}>
+                  <div className="card-header" id={`taskHeading${c._id}`}>
+                    <h2 className="mb-0">
+                      <button
+                        className="btn btn-link"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target={`#taskCollapse${c._id}`}
+                        aria-expanded={expandedTaskId === c._id}
+                        onClick={() => toggleTaskExpansion(c._id)}
+                      >
+                        {c.title}
+                      </button>
+                    </h2>
+                  </div>
+                  <div
+                    id={`taskCollapse${c._id}`}
+                    className={`collapse ${expandedTaskId === c._id ? 'show' : ''}`}
+                    aria-labelledby={`taskHeading${c._id}`}
+                    data-parent="#taskAccordion"
+                  >
+                    <div className="card-body">
+                      <p>Descripción: {c.description}</p>
+                      <p>Fecha límite: {new Date(c.deadline).toLocaleString("es-ES")}</p>
+                      <p>¿Realizada? {c.done ? 'Sí' : 'No'}</p>
+                      <div className="btn-group" role="group">
+                        <button
+                          className={`btn btn-sm ${c.done ? "btn-warning" : "btn-success"}`}
+                          onClick={() => handleTaskStatusChange(c._id, !c.done)}
+                        >
+                          {c.done ? "Pendiente" : "Completada"}
+                        </button>
+                        <button
+                          className="btn btn-sm btn-primary"
+                          onClick={() => navigate(`/updateTask/${c._id}`)}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => showDeleteConfirmation(c._id)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No existen tareas.</p>
+          )}
+        </div>
+      </div>
+      <div className={`modal fade ${showDeleteModal ? "show" : ""}`} tabIndex="-1" style={{ display: showDeleteModal ? "block" : "none" }}>
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Confirmar Eliminación</h5>
-              <button
-                type="button"
-                className="close"
-                onClick={hideDeleteConfirmation} 
-              >
+              <button type="button" className="close" onClick={hideDeleteConfirmation}>
                 <span>&times;</span>
               </button>
             </div>
@@ -217,28 +220,17 @@ export default function Tasks() {
               ¿Estás seguro de que deseas eliminar esta tarea?
             </div>
             <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={hideDeleteConfirmation} 
-              >
+              <button type="button" className="btn btn-secondary" onClick={hideDeleteConfirmation}>
                 Cancelar
               </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleDeleteTask(taskToDelete)} 
-              >
+              <button type="button" className="btn btn-danger" onClick={() => handleDeleteTask(taskToDelete)}>
                 Eliminar
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div
-        className={`modal-backdrop fade ${showDeleteModal ? "show" : ""}`}
-        style={{ display: showDeleteModal ? "block" : "none" }}
-      ></div>
+      <div className={`modal-backdrop fade ${showDeleteModal ? "show" : ""}`} style={{ display: showDeleteModal ? "block" : "none" }}></div>
     </section>
   );
 }
